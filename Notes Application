@@ -1,0 +1,83 @@
+import json
+import os
+
+class NoteTakingApp:
+    def __init__(self, filename='notes.json'):
+        self.filename = filename
+        self.notes = self.load_notes()
+
+    def load_notes(self):
+        if os.path.exists(self.filename):
+            with open(self.filename, 'r') as file:
+                return json.load(file)
+        return {}
+
+    def save_notes(self):
+        with open(self.filename, 'w') as file:
+            json.dump(self.notes, file, indent=4)
+
+    def add_note(self, title, content):
+        self.notes[title] = content
+        self.save_notes()
+        print(f'Note "{title}" added successfully.')
+
+    def view_notes(self):
+        if not self.notes:
+            print("No notes available.")
+            return
+        for title, content in self.notes.items():
+            print(f'\nTitle: {title}\nContent: {content}')
+
+    def edit_note(self, title, new_content):
+        if title in self.notes:
+            self.notes[title] = new_content
+            self.save_notes()
+            print(f'Note "{title}" updated successfully.')
+        else:
+            print(f'Note "{title}" not found.')
+
+    def delete_note(self, title):
+        if title in self.notes:
+            del self.notes[title]
+            self.save_notes()
+            print(f'Note "{title}" deleted successfully.')
+        else:
+            print(f'Note "{title}" not found.')
+
+    def run(self):
+        while True:
+            print("\nNote Taking Application")
+            print("1. Add Note")
+            print("2. View Notes")
+            print("3. Edit Note")
+            print("4. Delete Note")
+            print("5. Exit")
+            choice = input("Choose an option: ")
+
+            if choice == '1':
+                title = input("Enter note title: ")
+                content = input("Enter note content: ")
+                self.add_note(title, content)
+
+            elif choice == '2':
+                self.view_notes()
+
+            elif choice == '3':
+                title = input("Enter note title to edit: ")
+                new_content = input("Enter new content: ")
+                self.edit_note(title, new_content)
+
+            elif choice == '4':
+                title = input("Enter note title to delete: ")
+                self.delete_note(title)
+
+            elif choice == '5':
+                print("Exiting the application.")
+                break
+
+            else:
+                print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    app = NoteTakingApp()
+    app.run()
